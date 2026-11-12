@@ -82,4 +82,58 @@ Siekiant ištirti kompiliatoriaus optimizavimo įtaką, abi programos versijos (
 
 **Išvados:** 
 Su 100 000 įrašų visi flag'ai veikia beveik identiškai (~0.5s). Tačiau su 1 000 000 įrašų matome didelį šuolį: su `-O1` flag'u programa užtrunka ~5s, o su `-O2` ir `-O3` – net ~15s. 
-Tuo tarpu `-O1` palieka efektyviai veikiančias C++ bibliotekos funkcijas (`std::sort`), kurios su dideliais duomenimis susitvarko geriau.
+
+
+### 3. Skirtingų dalijimo strategijų spartos palyginimas (Class versija)
+
+Siekiant įrodyti, kuri strategija yra optimaliausia, buvo palyginti visų trijų strategijų dalijimo laikai naudojant `class` versiją su skirtingais optimizavimo flag'ais.
+
+**Su -O1 flag'u:**
+| Studentų skaičius | 1 strategija (kopijavimas) | 2 strategija (trynimas) | 3 strategija (optimizuota) |
+| :--- | :--- | :--- | :--- |
+| **100 000** | 0.028 s | 0.008 s | **0.007 s** |
+| **1 000 000** | 0.593 s | 0.170 s | **0.144 s** |
+
+**Su -O2 flag'u:**
+| Studentų skaičius | 1 strategija (kopijavimas) | 2 strategija (trynimas) | 3 strategija (optimizuota) |
+| :--- | :--- | :--- | :--- |
+| **100 000** | 0.027 s | 0.008 s | **0.007 s** |
+| **1 000 000** | 0.609 s | 0.190 s | **0.150 s** |
+
+**Su -O3 flag'u:**
+| Studentų skaičius | 1 strategija (kopijavimas) | 2 strategija (trynimas) | 3 strategija (optimizuota) |
+| :--- | :--- | :--- | :--- |
+| **100 000** | 0.030 s | 0.008 s | **0.006 s** |
+| **1 000 000** | 0.637 s | 0.173 s | **0.139 s** |
+
+**Išvados:** 
+Nepaisant pasirinkto optimizavimo lygio (`-O1`, `-O2` ar `-O3`) ir studentų skaičiaus, **3 strategija** visais atvejais išlieka greičiausia. Tai patvirtina, kad `std::partition` ir `std::move` semantikos naudojimas yra pats efektyviausias būdas skirstyti studentus į dvi grupes. 1 strategija yra lėčiausia dėl dvigubo duomenų kopijavimo, o 2 strategija atsilieka dėl vektoriaus elementų trynimo (`erase`) sąnaudų.
+
+
+
+## 1. Įdiegimo (Instaliavimo) instrukcija
+
+Projektas naudoja CMake ir reikalauja C++17 kompiliatoriaus.
+
+Sukompiliuoti ir paleisti programą Windows sistemoje galite šiomis komandomis:
+
+```cmd
+cd Desktop\Objektinis\main
+set PATH=%PATH%;C:\Program Files\CodeBlocks\MinGW\bin
+set PATH=%PATH%;C:\Program Files\CMake\bin
+cmake -B build -G "MinGW Makefiles"
+cmake --build build
+build\programa.exe
+```
+## 2. Naudojimosi instrukcija
+
+Paleidus programą, ekrane pasirodys pagrindinis meniu. Pagrindinės funkcijos:
+
+* **Duomenų įvedimas (1 ir 2 punktai):** Galite rankiniu būdu įvesti vieną ar daugiau studentų. Programa paprašys vardo, pavardės, pažymių ir egzamino balo.
+* **Studentų generavimas (3 punktas):** Programa automatiškai sugeneruos nurodytą skaičių studentų su atsitiktiniais pažymiais.
+* **Rezultatų peržiūra (4 punktas):** Išrikiuoja įvestus studentus pagal pasirinktą kriterijų ir išveda lentelę į ekraną.
+* **Failų generavimas (5 punktas):** Sugeneruoja penkis testavimo failus (studentai1000.txt, studentai10000.txt ir t.t.) spartos tyrimams.
+* **Spartos tyrimai (6 ir 7 punktai):** 
+  * **6** – sugeneruoja naujus failus ir iš karto atlieka tyrimą.
+  * **7** – atlieka tyrimą su jau esamais failais.
+  * Tyrimo metu pasirenkamas konteineris (1 - Vector, 2 - List), rikiavimo kriterijus ir rodymo būdas. Rezultatai išvedami į ekraną, o išskirstyti studentai išsaugomi naujuose .txt failuose.
