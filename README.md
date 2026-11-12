@@ -51,4 +51,30 @@ Pridėtas CMakeLists.txt instaliatorius, leidžiantis sukompiliuoti programą be
 - **Operacinė sistema:** Windows 11
 - **Kompiliatorius:** GNU GCC Compiler (Code::Blocks)
 
----
+## Tyrimų rezultatai
+
+### 1. Struct ir Class versijų spartos palyginimas (vector)
+
+Lyginant abi programos versijas, buvo naudojamas `std::vector` konteineris, 3-oji (optimizuota) dalijimo strategija bei 100 000 ir 1 000 000 įrašų failai. Matuojamas bendras programos veikimo laikas.
+
+| Implementacija | Studentų skaičius | Bendras apdorojimo laikas (s) |
+| :--- | :--- | :--- |
+| **Struct (v1.0)** | 100 000 | 0.494 s |
+| **Class (v1.1)** | 100 000 | 0.459 s |
+| **Struct (v1.0)** | 1 000 000 | 5.300 s |
+| **Class (v1.1)** | 1 000 000 | 5.105 s |
+
+
+
+### 2. Kompiliatoriaus optimizavimo flag'ų įtaka (vector)
+
+Siekiant ištirti kompiliatoriaus optimizavimo įtaką, abi programos versijos (`struct` ir `class`) buvo sukompiliuotos su skirtingais optimizavimo flag'ais (`-O1`, `-O2`, `-O3`). Buvo matuojamas `.exe` failo dydis bei programos veikimo laikas su 100 000 ir 1 000 000 įrašų failais.
+
+| Implementacija | Optimizavimo flag'as | `.exe` failo dydis (KB) | 100 000 įrašų laikas (s) | 1 000 000 įrašų laikas (s) |
+| :--- | :--- | :--- | :--- | :--- |
+| **Struct** | `-O1` | [XXX.X] KB | 0.491 s | 5.300 s |
+| **Struct** | `-O2` | [XXX.X] KB | 0.488 s | 14.880 s |
+| **Struct** | `-O3` | [XXX.X] KB | 0.499 s | 14.934 s |
+| **Class** | `-O1` | [XXX.X] KB | [X.XXX] s | [X.XXX] s |
+| **Class** | `-O2` | [XXX.X] KB | [X.XXX] s | [XX.XXX] s |
+| **Class** | `-O3` | [XXX.X] KB | [X.XXX] s | [XX.XXX] s |
