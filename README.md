@@ -64,7 +64,8 @@ Lyginant abi programos versijas, buvo naudojamas `std::vector` konteineris, 3-oj
 | **Struct (v1.0)** | 1 000 000 | 5.300 s |
 | **Class (v1.1)** | 1 000 000 | 5.105 s |
 
-
+**Išvados:** 
+Palyginus abi versijas matome, kad `class` versija yra šiek tiek greitesnė už `struct`. Su 100 000 įrašų skirtumas nedidelis(tik 0.035 s.), tačiau su 1 000 000 įrašų `class` versija laimi aiškiau (5.105s prieš 5.300s). 
 
 ### 2. Kompiliatoriaus optimizavimo flag'ų įtaka (vector)
 
@@ -72,9 +73,13 @@ Siekiant ištirti kompiliatoriaus optimizavimo įtaką, abi programos versijos (
 
 | Implementacija | Optimizavimo flag'as | `.exe` failo dydis (KB) | 100 000 įrašų laikas (s) | 1 000 000 įrašų laikas (s) |
 | :--- | :--- | :--- | :--- | :--- |
-| **Struct** | `-O1` | [XXX.X] KB | 0.491 s | 5.300 s |
-| **Struct** | `-O2` | [XXX.X] KB | 0.488 s | 14.880 s |
-| **Struct** | `-O3` | [XXX.X] KB | 0.499 s | 14.934 s |
-| **Class** | `-O1` | [XXX.X] KB | [X.XXX] s | [X.XXX] s |
-| **Class** | `-O2` | [XXX.X] KB | [X.XXX] s | [XX.XXX] s |
-| **Class** | `-O3` | [XXX.X] KB | [X.XXX] s | [XX.XXX] s |
+| **Struct** | `-O1` | 130 KB | 0.491 s | 5.300 s |
+| **Struct** | `-O2` | 130 KB | 0.488 s | 14.880 s |
+| **Struct** | `-O3` | 130 KB | 0.499 s | 14.934 s |
+| **Class** | `-O1` | 124 KB | 0.500 s | 15.146 s |
+| **Class** | `-O2` | 124 KB | 0.521 s | 15.614 s |
+| **Class** | `-O3` | 124 KB | 0.492 s | 15.599 s |
+
+**Išvados:** 
+Su 100 000 įrašų visi flag'ai veikia beveik identiškai (~0.5s). Tačiau su 1 000 000 įrašų matome didelį šuolį: su `-O1` flag'u programa užtrunka ~5s, o su `-O2` ir `-O3` – net ~15s. 
+Tuo tarpu `-O1` palieka efektyviai veikiančias C++ bibliotekos funkcijas (`std::sort`), kurios su dideliais duomenimis susitvarko geriau.
