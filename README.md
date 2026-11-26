@@ -1,9 +1,9 @@
-# Studentų apdorojimo programa (v1.1)
+# Studentų apdorojimo programa (v1.2)
 
 ## Aprašymas
 Ši programa skirta studentų duomenų apdorojimui ir spartos analizei. Ji nuskaito studentus iš failo (arba juos sugeneruoja), apskaičiuoja galutinį balą (0.4 × vidurkis + 0.6 × egzaminas), suskirsto studentus į dvi grupes (vargšiukus < 5.0 ir kietakius ≥ 5.0) ir išveda rezultatus į atskirus failus. Programoje realizuotos trys skirtingos skirstymo strategijos, leidžiančios palyginti jų spartą su `std::vector` ir `std::list` konteineriais. 
 
-Nuo **v1.1** versijos programoje vietoj `struct` naudojama pilnavertė `class Studentas` su inkapsuliuotais duomenimis (private), getteriais, seteriais, konstruktoriais ir destruktoriumi.
+Nuo **v1.1** versijos programoje vietoj `struct` naudojama pilnavertė `class Studentas` su inkapsuliuotais duomenimis (private), getteriais, seteriais, konstruktoriais ir destruktoriumi. Nuo **v1.2** versijos klasė pilnai realizuoja **Rule of Three** taisyklę ir turi perdengtus įvesties/išvesties operatorius.
 
 ## Versijų istorija (Releases)
 
@@ -33,11 +33,16 @@ Pridėtas CMakeLists.txt instaliatorius, leidžiantis sukompiliuoti programą be
 - **Optimizavimas:** Naudojant `std::move` semantiką, žymiai pagreitintas studentų perkėlimas tarp konteinerių 3 strategijoje.
 - Atlikti Struct vs Class bei kompiliatoriaus optimizavimo flag'ų (-O1, -O2, -O3) spartos tyrimai su vector konteineriu.
 
+### v1.2
+- **Rule of Three:** Realizuotas rankinis kopijavimo konstruktorius (`Studentas(const Studentas&)`), kopijavimo priskyrimo operatorius (`operator=`) su self-assignment apsauga ir destruktorius (`~Studentas()`).
+- **I/O operatoriai:** Perdengti `operator>>` ir `operator<<`, leidžiantys patogiai skaityti ir rašyti studentų duomenis iš/į bet kokį srautą (`cin`, `cout`, failus).
+- **Demonstracija:** Pridėtas naujas meniu punktas `8`, kuris žingsnis po žingsnio parodo Rule of Three ir I/O operatorių veikimą, taip pat statinius metodų iškvietimų skaitliukus.
+
 ## Programos struktūra
+- `Studentas.h` / `Studentas.cpp` – studento klasė su pilnu Rule of Three (copy ctor, copy assignment, destruktorius) ir I/O operatoriais.
 - `Strategijos.h` / `StrategijosVector.cpp` / `StrategijosList.cpp` – 3 skirstymo strategijos.
 - `CMakeLists.txt` – instaliatorius.
 - `main.cpp` – pagrindinis meniu.
-- `Studentas.h` / `Studentas.cpp` – studento klasė (su enkapsuliacija), skaičiavimai, konstruktoriai/destruktorius.
 - `Failai.h` / `Failai.cpp` – failų generavimas, nuskaitymas ir išvedimas.
 - `Rikiavimas.h` / `Rikiavimas.cpp` – rūšiavimas.
 - `Tyrimai.h` / `Tyrimai.cpp` – spartos matavimas su std::chrono.
@@ -126,6 +131,51 @@ Siekiant įrodyti, kuri strategija yra optimaliausia, buvo palyginti visų trij�
 **Išvados:** 
 Nepaisant pasirinkto optimizavimo lygio (`-O1`, `-O2` ar `-O3`) ir studentų skaičiaus, **3 strategija** visais atvejais išlieka greičiausia. Tai patvirtina, kad `std::partition` ir `std::move` semantikos naudojimas yra pats efektyviausias būdas skirstyti studentus į dvi grupes. 1 strategija yra lėčiausia dėl dvigubo duomenų kopijavimo, o 2 strategija atsilieka dėl vektoriaus elementų trynimo (`erase`) sąnaudų.
 
+# Studentų apdorojimo programa (v1.2)
+
+Šioje versijoje pagrindinis dėmesys skirtas `class Studentas` tobulinimui, siekiant užtikrinti saugų resursų valdymą ir lankstų duomenų įvedimą/išvedimą. Realizuoti šie reikalavimai:
+
+1. **Rule of Three taisyklė:** Kadangi klasė turi savo destruktorių, buvo rankiniu būdu realizuoti kopijavimo konstruktorius ir kopijavimo priskyrimo operatorius. Tai užtikrina, kad kopijuojant studento objektą, visi duomenys (įskaitant `std::vector` su pažymiais) būtų nukopijuoti saugiai, be dvigubo atminties atlaisvinimo klaidų.
+2. **Perdengti įvesties/išvesties operatoriai:** Sukurti `operator>>` ir `operator<<`, kurie leidžia studento duomenis nuskaityti ir išvesti per bet kokį srautą. Tai reiškia, kad ta pati klasė gali būti naudojama tiek įvedant duomenis ranka per klaviatūrą (`std::cin`), tiek skaitant iš failo (`std::ifstream`), tiek išvedant į ekraną (`std::cout`) ar į failą (`std::ofstream`).
+3. **Demonstracija ir statistika:** Pridėtas naujas meniu punktas (8) ir skaitliukai, kurie gyvai parodo, kaip dažnai ir kada yra kviečiami šie specialieji metodai programos veikimo metu.
+
+### Demonstracijos veikimo principas
+
+**Pasirinkus meniu punktą `3`,poto `4`:**
+Vartotojui įvedus studentus (arba juos sugeneravus), pasirinkus šį punktą programa išrikiuoja studentus pagal pasirinktą kriterijų ir išveda juos į ekraną. Po lentele programa išveda trijų statinių skaitliukų reikšmes:
+- `Copy ctor iskvietimu:` – kiek kartų buvo sukurtos studentų kopijos.
+- `Copy assign iskvietimu:` – kiek kartų studentų duomenys buvo priskirti jau egzistuojantiems objektams.
+- `Destructor iskvietimu:` – kiek studentų objektų jau buvo sunaikinti.
+<img width="455" height="397" alt="Screenshot 2026-11-26 183650" src="https://github.com/user-attachments/assets/02c9e43b-5b40-4c6b-ae06-11efc63bf6bf" />
+<img width="376" height="214" alt="Screenshot 2026-11-26 183701" src="https://github.com/user-attachments/assets/45dd22c6-6809-4ee4-9974-e350a175221f" />
+
+
+**Pasirinkus meniu punktą `8`:**
+Šis punktas skirtas tiesioginiam ir vaizdžiam Rule of Three bei I/O operatorių demonstravimui. Programa atlieka šiuos veiksmus iš eilės:
+1. **Copy konstruktorius:** Sukuria studentą `a`, tada sukuria `b = a`. Parodo, kad `b` turi tuos pačius duomenis ir yra nepriklausoma atminties kopija (deep copy).
+2. **Copy assignment:** Sukuria studentą `c`, tada atlieka `c = a`. Parodo, kad egzistuojantis objektas sėkmingai gauna naujus duomenis.
+3. **Self-assignment:** Atlieka `c = c`. Parodo, kad programa suveikia saugiai ir nesugriauna savo pačių duomenų (dėka `if (this != &kitas)` apsaugos).
+4. **I/O operatoriai:** Išveda studento duomenis naudodama perdengtą `operator<<`.
+5. **Destruktorius:** Parodo skaitliukų reikšmes prieš ir po to, kai laikinas studento objektas išeina iš savo kodo bloko (`scope`). Tai aiškiai įrodo, kada ir kaip yra kviečiamas `~Studentas()`.
+<img width="323" height="166" alt="Screenshot 2026-11-26 183929" src="https://github.com/user-attachments/assets/e7e5cf3e-bb26-4fb9-945d-1d0b4b85552c" />
+<img width="516" height="425" alt="Screenshot 2026-11-26 183953" src="https://github.com/user-attachments/assets/f2387385-262c-4450-89fb-142f4a40e44b" />
+
+
+####Įvesties ir išvesties operatoriai
+
+**1. Įvesties operatorius (`operator>>`)**
+Realizuotas `Studentas.cpp` faile. Jis leidžia nuskaityti studento duomenis iš bet kokio įvesties srauto (klaviatūros ar failo). Grąžindamas `std::istream&`, jis leidžia grandinėti skaitymą (`cin >> a >> b`).
+
+```cpp
+std::istream& operator>>(std::istream& is, Studentas& s) {
+    std::vector<int> paz;
+    int p;
+    is >> s.vardas >> s.pavarde;
+    while (is >> p && p > 0) paz.push_back(p);
+    is >> s.egzaminas;
+    s.setPazymiai(paz);
+    return is;
+}
 
 
 ## 1. Įdiegimo (Instaliavimo) instrukcija
@@ -133,7 +183,19 @@ Nepaisant pasirinkto optimizavimo lygio (`-O1`, `-O2` ar `-O3`) ir studentų ska
 Projektas naudoja CMake ir reikalauja C++17 kompiliatoriaus.
 
 Sukompiliuoti ir paleisti programą Windows sistemoje galite šiomis komandomis:
+```
 
+## 1. Įdiegimo (Instaliavimo) instrukcija
+
+Projektas naudoja CMake ir reikalauja C++17 kompiliatoriaus. 
+
+### Paruošimas
+1. Įsitikinkite, kad kompiuteryje yra įdiegtos šios programos:
+   - **CMake** (3.16 arba naujesnė versija)
+   - **C++ kompiliatorius** (pvz., MinGW per Code::Blocks, arba MSVC)
+2. Atidarykite terminalą (Windows sistemoje – **Command Prompt (cmd)**  ir pereikite į savo projekto katalogą:
+```cmd
+cd Desktop\Objektinis\main
 ```cmd
 cd Desktop\Objektinis\main
 set PATH=%PATH%;C:\Program Files\CodeBlocks\MinGW\bin
@@ -154,3 +216,4 @@ Paleidus programą, ekrane pasirodys pagrindinis meniu. Pagrindinės funkcijos:
   * **6** – sugeneruoja naujus failus ir iš karto atlieka tyrimą.
   * **7** – atlieka tyrimą su jau esamais failais.
   * Tyrimo metu pasirenkamas konteineris (1 - Vector, 2 - List), rikiavimo kriterijus ir rodymo būdas. Rezultatai išvedami į ekraną, o išskirstyti studentai išsaugomi naujuose .txt failuose.
+* **8 punktas (Rule of Three demonstracija):** Paleidžia žingsnis po žingsnio demonstraciją. Ji parodo, kaip veikia kopijavimo konstruktorius, priskyrimo operatorius, apsauga nuo savęs priskyrimo (self-assignment) ir kada yra iškviečiamas destruktorius. Taip pat ekrane išvedami statiniai metodų iškvietimų skaitliukai.
