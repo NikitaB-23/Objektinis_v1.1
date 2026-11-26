@@ -20,10 +20,15 @@ private:
     void skaiciuotiRezultatus();
 
 public:
+    static int copyCtorKiekis;
+    static int copyAssignKiekis;
+    static int destructorKiekis;
+
     Studentas();
     Studentas(const std::string& v, const std::string& p, const std::vector<int>& paz, int egz);
+
     Studentas(const Studentas& kitas);
-    Studentas(Studentas&& kitas) noexcept;
+    Studentas& operator=(const Studentas& kitas);
     ~Studentas();
 
     std::string getVardas() const { return vardas; }
@@ -39,9 +44,6 @@ public:
     void setPavarde(const std::string& p) { pavarde = p; }
     void setPazymiai(const std::vector<int>& p) { pazymiai = p; skaiciuotiRezultatus(); }
     void setEgzaminas(int e) { egzaminas = e; skaiciuotiRezultatus(); }
-
-    Studentas& operator=(const Studentas& kitas) = default;
-    Studentas& operator=(Studentas&& kitas) = default;
 
     friend std::istream& operator>>(std::istream& is, Studentas& s);
     friend std::ostream& operator<<(std::ostream& os, const Studentas& s);
