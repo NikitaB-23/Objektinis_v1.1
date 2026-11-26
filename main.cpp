@@ -84,6 +84,10 @@ int main() {
                 Tvarka t = (tv == 1) ? Tvarka::Didejimo : Tvarka::Mazejimo;
                 rikiuotiStudentus(grupeVec, krit, t);
                 spausdintiRezultatus(grupeVec, isv);
+
+                cout << "\nCopy ctor iskvietimu:   " << Studentas::copyCtorKiekis << "\n";
+                cout << "Copy assign iskvietimu: " << Studentas::copyAssignKiekis << "\n";
+                cout << "Destructor iskvietimu:  " << Studentas::destructorKiekis << "\n";
             }
         }
         else if (pas == 5) {
