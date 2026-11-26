@@ -4,4 +4,6 @@
 
 void ivestiStudenta(Studentas& s);
 void spausdintiRezultatus(const StudentuKon& grupe, int pasirinkimas);
+void demonstracija();
+
 #endif
