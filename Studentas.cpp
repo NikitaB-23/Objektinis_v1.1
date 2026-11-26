@@ -3,27 +3,41 @@
 #include <iomanip>
 #include <cstdlib>
 
-Studentas::Studentas() : egzaminas(0), vidurkis(0), mediana(0), rezVid(0), rezMed(0) {}
+int Studentas::copyCtorKiekis = 0;
+int Studentas::copyAssignKiekis = 0;
+int Studentas::destructorKiekis = 0;
+
+Studentas::Studentas() : Studentas("", "", {}, 0) {}
 
 Studentas::Studentas(const std::string& v, const std::string& p, const std::vector<int>& paz, int egz)
-    : vardas(v), pavarde(p), pazymiai(paz), egzaminas(egz) {
+    : vardas(v), pavarde(p), pazymiai(paz), egzaminas(egz),
+      vidurkis(0), mediana(0), rezVid(0), rezMed(0) {
     skaiciuotiRezultatus();
 }
 
 Studentas::Studentas(const Studentas& kitas)
-    : vardas(kitas.vardas), pavarde(kitas.pavarde), pazymiai(kitas.pazymiai),
-      egzaminas(kitas.egzaminas), vidurkis(kitas.vidurkis), mediana(kitas.mediana),
-      rezVid(kitas.rezVid), rezMed(kitas.rezMed) {}
-
-Studentas::Studentas(Studentas&& kitas) noexcept
-    : vardas(std::move(kitas.vardas)), pavarde(std::move(kitas.pavarde)),
-      pazymiai(std::move(kitas.pazymiai)), egzaminas(kitas.egzaminas),
-      vidurkis(kitas.vidurkis), mediana(kitas.mediana),
-      rezVid(kitas.rezVid), rezMed(kitas.rezMed) {
-    kitas.egzaminas = 0;
+    : vardas(kitas.vardas), pavarde(kitas.pavarde),
+      pazymiai(kitas.pazymiai), egzaminas(kitas.egzaminas),
+      vidurkis(0), mediana(0), rezVid(0), rezMed(0) {
+    ++copyCtorKiekis;
+    skaiciuotiRezultatus();
 }
 
-Studentas::~Studentas() {}
+Studentas& Studentas::operator=(const Studentas& kitas) {
+    if (this != &kitas) {
+        ++copyAssignKiekis;
+        vardas = kitas.vardas;
+        pavarde = kitas.pavarde;
+        pazymiai = kitas.pazymiai;
+        egzaminas = kitas.egzaminas;
+        skaiciuotiRezultatus();
+    }
+    return *this;
+}
+
+Studentas::~Studentas() {
+    ++destructorKiekis;
+}
 
 void Studentas::skaiciuotiRezultatus() {
     if (pazymiai.empty()) {
