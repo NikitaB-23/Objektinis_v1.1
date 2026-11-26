@@ -196,4 +196,10 @@ void paleistiTyrima(bool generuotiFailus) {
             testuotiStrategijasList(failoVardas, rikiavimas, tvarka, isvedimas, 3);
         }
     }
+
+    cout << "\n=== RULE OF THREE STATISTIKA (PO TYRIMO) ===\n";
+    cout << "Copy ctor iskvietimu:   " << Studentas::copyCtorKiekis << "\n";
+    cout << "Copy assign iskvietimu: " << Studentas::copyAssignKiekis << "\n";
+    cout << "Destructor iskvietimu:  " << Studentas::destructorKiekis << "\n";
+    cout << "============================================\n";
 }
