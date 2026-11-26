@@ -27,6 +27,7 @@ int main() {
         cout << "5 - Sugeneruoti 5 testinius failus\n";
         cout << "6 - Tyrimas su NAUJAI sugeneruotais failais\n";
         cout << "7 - Tyrimas su JAU TURIMAIS failais\n";
+        cout << "8 - Rule of Three demonstracija\n";
         cout << "0 - Baigti darba\n";
         cout << "Pasirinkite: ";
 
@@ -100,6 +101,9 @@ int main() {
         }
         else if (pas == 7) {
             paleistiTyrima(false);
+        }
+        else if (pas == 8) {
+            demonstracija();
         }
     }
     return 0;
